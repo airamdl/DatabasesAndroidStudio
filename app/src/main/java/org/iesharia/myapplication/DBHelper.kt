@@ -44,14 +44,26 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory? = null) 
     fun getName(): Cursor? {
 
         val db = this.readableDatabase
+        return db.rawQuery("SELECT * FROM $TABLE_NAME", null)
 
-        return db.rawQuery("SELECT * FROM " + TABLE_NAME, null)
-    }
-
-    fun deleteName(): Cursor?{
-        val db = this.
+        //return db.rawQuery("SELECT DISTINCT $NAME_COl FROM $TABLE_NAME", null)
 
     }
+
+    fun deleteName(id: String): Int {
+        val db = this.writableDatabase
+        val selection = "$ID_COL = ?"
+        val selectionArgs = arrayOf(id)
+
+        val deletedRows = db.delete(TABLE_NAME, selection, selectionArgs)
+        db.close()
+        return deletedRows
+
+    }
+//
+//    fun updateName(): Cursor?{
+//
+//    }
 
     companion object{
         private val DATABASE_NAME = "nombres"

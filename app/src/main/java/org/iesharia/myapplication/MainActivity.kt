@@ -117,7 +117,7 @@ fun MainActivity(modifier: Modifier) {
             singleLine = true,
             shape = RoundedCornerShape(10.dp)
         )
-        var bModifier:Modifier = Modifier.padding(20.dp)
+        var bModifier:Modifier = Modifier.padding(10.dp)
         Row {
             Button(
                 modifier = bModifier,
@@ -163,6 +163,28 @@ fun MainActivity(modifier: Modifier) {
                 }
             ) {
                 Text(text = "Mostrar")
+            }
+            Button(
+                modifier = bModifier,
+                onClick = {
+
+                    val id = idValue
+                    val name = nameValue
+
+
+                    db.deleteName(id)
+
+                    Toast.makeText(
+                        context,
+                        name + " eliminado de la base de datos",
+                        Toast.LENGTH_LONG)
+                        .show()
+
+                    nameValue = ""
+                    ageValue = ""
+                }
+            ) {
+                Text(text = "Eliminar")
             }
         }
         Row {
