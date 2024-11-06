@@ -1,6 +1,5 @@
 package org.iesharia.myapplication
 
-import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -61,7 +60,7 @@ class MainActivity : ComponentActivity() {
 fun MainActivity(modifier: Modifier) {
     val context = LocalContext.current
     val db = DBHelper(context)
-
+    var lId:String by remember { mutableStateOf("ID") }
     var lName:String by remember { mutableStateOf("Nombre") }
     var lAge:String by remember { mutableStateOf("Edad") }
 
@@ -79,6 +78,18 @@ fun MainActivity(modifier: Modifier) {
             text = "Muuuuuy simple\nNombre/Edad",
             fontSize = 10.sp
 
+        )
+        var idValue by remember { mutableStateOf("") }
+        OutlinedTextField(
+            value = idValue,
+            onValueChange = {
+                idValue = it
+            },
+            modifier = Modifier,
+            textStyle = TextStyle(color = Color.DarkGray),
+            label = { Text(text = "ID") },
+            singleLine = true,
+            shape = RoundedCornerShape(10.dp)
         )
         //Nombre
         var nameValue by remember { mutableStateOf("") }
@@ -112,11 +123,11 @@ fun MainActivity(modifier: Modifier) {
                 modifier = bModifier,
                 onClick = {
 
-
+                    val id = idValue
                     val name = nameValue
                     val age = ageValue
 
-                    db.addName(name, age)
+                    db.addName(id, name, age)
 
                     Toast.makeText(
                         context,
@@ -138,10 +149,12 @@ fun MainActivity(modifier: Modifier) {
                     val cursor = db.getName()
 
                     cursor!!.moveToFirst()
+                    lId += "\n" + cursor.getString(cursor.getColumnIndex(DBHelper.ID_COL))
                     lName += "\n" + cursor.getString(cursor.getColumnIndex(DBHelper.NAME_COl))
                     lAge += "\n" + cursor.getString(cursor.getColumnIndex(DBHelper.AGE_COL))
 
                     while(cursor.moveToNext()){
+                        lId += "\n" + cursor.getString(cursor.getColumnIndex(DBHelper.ID_COL))
                         lName += "\n" + cursor.getString(cursor.getColumnIndex(DBHelper.NAME_COl))
                         lAge += "\n" + cursor.getString(cursor.getColumnIndex(DBHelper.AGE_COL))
                     }
@@ -153,6 +166,10 @@ fun MainActivity(modifier: Modifier) {
             }
         }
         Row {
+            Text(
+                modifier = bModifier,
+                text = lId
+            )
             Text(
                 modifier = bModifier,
                 text = lName
