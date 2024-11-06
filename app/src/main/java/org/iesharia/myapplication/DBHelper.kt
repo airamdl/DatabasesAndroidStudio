@@ -26,10 +26,11 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory? = null) 
     }
 
 
-    fun addName(name : String, age : String ){
+    fun addName(id: String, name: String, age: String){
 
         val values = ContentValues()
 
+        values.put(ID_COL, id)
         values.put(NAME_COl, name)
         values.put(AGE_COL, age)
 
@@ -45,6 +46,11 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory? = null) 
         val db = this.readableDatabase
 
         return db.rawQuery("SELECT * FROM " + TABLE_NAME, null)
+    }
+
+    fun deleteName(): Cursor?{
+        val db = this.
+
     }
 
     companion object{
