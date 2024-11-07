@@ -60,10 +60,20 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory? = null) 
         return deletedRows
 
     }
-//
-//    fun updateName(): Cursor?{
-//
-//    }
+
+    fun updateName(id: String, newName: String, newAge: String): Int {
+        val db = this.writableDatabase
+        val values = ContentValues()
+        values.put(NAME_COl, newName)
+        values.put(AGE_COL, newAge)
+
+        val selection = "$ID_COL = ?"
+        val selectionArgs = arrayOf(id)
+
+        val updatedRows = db.update(TABLE_NAME, values, selection, selectionArgs)
+        db.close()
+        return updatedRows
+    }
 
     companion object{
         private val DATABASE_NAME = "nombres"

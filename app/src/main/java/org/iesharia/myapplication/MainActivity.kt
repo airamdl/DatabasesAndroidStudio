@@ -117,7 +117,7 @@ fun MainActivity(modifier: Modifier) {
             singleLine = true,
             shape = RoundedCornerShape(10.dp)
         )
-        var bModifier:Modifier = Modifier.padding(10.dp)
+        var bModifier:Modifier = Modifier.padding(5.dp)
         Row {
             Button(
                 modifier = bModifier,
@@ -132,7 +132,8 @@ fun MainActivity(modifier: Modifier) {
                     Toast.makeText(
                         context,
                         name + " adjuntado a la base de datos",
-                        Toast.LENGTH_LONG)
+                        Toast.LENGTH_LONG
+                    )
                         .show()
 
                     nameValue = ""
@@ -144,6 +145,9 @@ fun MainActivity(modifier: Modifier) {
             Button(
                 modifier = bModifier,
                 onClick = {
+                    lId = "ID"
+                    lName = "Nombre"
+                    lAge = "Edad"
                     val db = DBHelper(context, null)
 
                     val cursor = db.getName()
@@ -153,7 +157,7 @@ fun MainActivity(modifier: Modifier) {
                     lName += "\n" + cursor.getString(cursor.getColumnIndex(DBHelper.NAME_COl))
                     lAge += "\n" + cursor.getString(cursor.getColumnIndex(DBHelper.AGE_COL))
 
-                    while(cursor.moveToNext()){
+                    while (cursor.moveToNext()) {
                         lId += "\n" + cursor.getString(cursor.getColumnIndex(DBHelper.ID_COL))
                         lName += "\n" + cursor.getString(cursor.getColumnIndex(DBHelper.NAME_COl))
                         lAge += "\n" + cursor.getString(cursor.getColumnIndex(DBHelper.AGE_COL))
@@ -164,6 +168,8 @@ fun MainActivity(modifier: Modifier) {
             ) {
                 Text(text = "Mostrar")
             }
+        }
+        Row {
             Button(
                 modifier = bModifier,
                 onClick = {
@@ -185,6 +191,35 @@ fun MainActivity(modifier: Modifier) {
                 }
             ) {
                 Text(text = "Eliminar")
+            }
+            Button(
+                modifier = bModifier,
+                onClick = {
+                    val id = idValue
+                    val newName = nameValue
+                    val newAge = ageValue
+
+                    val updatedRows = db.updateName(id, newName, newAge)
+
+                    if (updatedRows > 0) {
+                        Toast.makeText(
+                            context,
+                            "Nombre actualizado correctamente",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "Modifica algun campo a actualizar",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+
+                    nameValue = ""
+                    ageValue = ""
+                }
+            ) {
+                Text(text = "Actualizar")
             }
         }
         Row {
