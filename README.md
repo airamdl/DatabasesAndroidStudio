@@ -12,73 +12,74 @@ Este repositorio contiene un proyecto desarrollado en **Android Studio** que dem
 
 ## Creación de la base de datos
 ```gradle
-    class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
-    companion object {
-        private const val DATABASE_NAME = "MyDatabase.db"
-        private const val DATABASE_VERSION = 1
-        const val TABLE_NAME = "users"
-        const val COLUMN_ID = "id"
-        const val COLUMN_NAME = "name"
-        const val COLUMN_AGE = "age"
+        class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+        companion object {
+            private const val DATABASE_NAME = "MyDatabase.db"
+            private const val DATABASE_VERSION = 1
+            const val TABLE_NAME = "users"
+            const val COLUMN_ID = "id"
+            const val COLUMN_NAME = "name"
+            const val COLUMN_AGE = "age"
+        }
+    
+        override fun onCreate(db: SQLiteDatabase) {
+            val createTableQuery = """
+                CREATE TABLE $TABLE_NAME (
+                    $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                    $COLUMN_NAME TEXT NOT NULL,
+                    $COLUMN_AGE INTEGER
+                )
+            """
+            db.execSQL(createTableQuery)
+        }
+    
+        override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+            db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
+            onCreate(db)
+        }
     }
-
-    override fun onCreate(db: SQLiteDatabase) {
-        val createTableQuery = """
-            CREATE TABLE $TABLE_NAME (
-                $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                $COLUMN_NAME TEXT NOT NULL,
-                $COLUMN_AGE INTEGER
-            )
-        """
-        db.execSQL(createTableQuery)
-    }
-
-    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
-        onCreate(db)
-    }
-}
 
 ## Operaciones CRUD
 Insertar datos
 ```gradle
-    fun insertData(name: String, age: Int): Long {
-    val db = this.writableDatabase
-    val contentValues = ContentValues().apply {
-        put(COLUMN_NAME, name)
-        put(COLUMN_AGE, age)
+        fun insertData(name: String, age: Int): Long {
+        val db = this.writableDatabase
+        val contentValues = ContentValues().apply {
+            put(COLUMN_NAME, name)
+            put(COLUMN_AGE, age)
+        }
+        return db.insert(TABLE_NAME, null, contentValues)
     }
-    return db.insert(TABLE_NAME, null, contentValues)
-}
 
 
 Leer datos
 
 ```gradle
-    fun getAllData(): Cursor {
-    val db = this.readableDatabase
-    return db.rawQuery("SELECT * FROM $TABLE_NAME", null)
-}
+        fun getAllData(): Cursor {
+        val db = this.readableDatabase
+        return db.rawQuery("SELECT * FROM $TABLE_NAME", null)
+    }
 
 
 Actualizar Datos
+
 ```gradle
-    fun updateData(id: Int, name: String, age: Int): Int {
-    val db = this.writableDatabase
-    val contentValues = ContentValues().apply {
-        put(COLUMN_NAME, name)
-        put(COLUMN_AGE, age)
+        fun updateData(id: Int, name: String, age: Int): Int {
+        val db = this.writableDatabase
+        val contentValues = ContentValues().apply {
+            put(COLUMN_NAME, name)
+            put(COLUMN_AGE, age)
+        }
+        return db.update(TABLE_NAME, contentValues, "$COLUMN_ID = ?", arrayOf(id.toString()))
     }
-    return db.update(TABLE_NAME, contentValues, "$COLUMN_ID = ?", arrayOf(id.toString()))
-}
 
 
 Borrar datos
 ```gradle
-    fun deleteData(id: Int): Int {
-    val db = this.writableDatabase
-    return db.delete(TABLE_NAME, "$COLUMN_ID = ?", arrayOf(id.toString()))
-}
+        fun deleteData(id: Int): Int {
+        val db = this.writableDatabase
+        return db.delete(TABLE_NAME, "$COLUMN_ID = ?", arrayOf(id.toString()))
+    }
 
 
    
