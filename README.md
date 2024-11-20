@@ -38,7 +38,7 @@ Este repositorio contiene un proyecto desarrollado en **Android Studio** que dem
             onCreate(db)
         }
     }
-
+```
 ## Operaciones CRUD
 Insertar datos
 ```gradle
@@ -50,7 +50,7 @@ Insertar datos
         }
         return db.insert(TABLE_NAME, null, contentValues)
     }
-
+```
 
 Leer datos
 
@@ -59,7 +59,7 @@ Leer datos
         val db = this.readableDatabase
         return db.rawQuery("SELECT * FROM $TABLE_NAME", null)
     }
-
+```
 
 Actualizar Datos
 
@@ -72,7 +72,7 @@ Actualizar Datos
         }
         return db.update(TABLE_NAME, contentValues, "$COLUMN_ID = ?", arrayOf(id.toString()))
     }
-
+```
 
 Borrar datos
 ```gradle
@@ -80,7 +80,7 @@ Borrar datos
         val db = this.writableDatabase
         return db.delete(TABLE_NAME, "$COLUMN_ID = ?", arrayOf(id.toString()))
     }
-
+```
 
    
 ## Requisitos
@@ -105,3 +105,4 @@ Borrar datos
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+```
