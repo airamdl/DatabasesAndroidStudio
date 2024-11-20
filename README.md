@@ -12,73 +12,97 @@ Este repositorio contiene un proyecto desarrollado en **Android Studio** que dem
 
 ## Creación de la base de datos
 ```gradle
-        class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
-        companion object {
-            private const val DATABASE_NAME = "MyDatabase.db"
-            private const val DATABASE_VERSION = 1
-            const val TABLE_NAME = "users"
-            const val COLUMN_ID = "id"
-            const val COLUMN_NAME = "name"
-            const val COLUMN_AGE = "age"
-        }
-    
-        override fun onCreate(db: SQLiteDatabase) {
-            val createTableQuery = """
-                CREATE TABLE $TABLE_NAME (
-                    $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                    $COLUMN_NAME TEXT NOT NULL,
-                    $COLUMN_AGE INTEGER
-                )
-            """
-            db.execSQL(createTableQuery)
-        }
-    
-        override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-            db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
-            onCreate(db)
-        }
-    }
+        class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory? = null) :
+            SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
+        
+            override fun onCreate(db: SQLiteDatabase) {
+        
+                val query = ("CREATE TABLE " + TABLE_NAME + " ("
+                        + ID_COL + " INTEGER PRIMARY KEY, " +
+                        NAME_COl + " TEXT," +
+                        AGE_COL + " TEXT" + ")")
+        
+                db.execSQL(query)
+            }
+        
+            override fun onUpgrade(db: SQLiteDatabase, p1: Int, p2: Int) {
+        
+                db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME)
+                onCreate(db)
+            }
+               companion object{
+                private val DATABASE_NAME = "nombres"
+        
+                private val DATABASE_VERSION = 1
+        
+                val TABLE_NAME = "name_table"
+        
+                val ID_COL = "id"
+        
+                val NAME_COl = "nombre"
+        
+                val AGE_COL = "edad"
+            }
 ```
 ## Operaciones CRUD
 Insertar datos
 ```gradle
-        fun insertData(name: String, age: Int): Long {
+         fun addName(id: String, name: String, age: String){
+
+        val values = ContentValues()
+
+        values.put(ID_COL, id)
+        values.put(NAME_COl, name)
+        values.put(AGE_COL, age)
+
         val db = this.writableDatabase
-        val contentValues = ContentValues().apply {
-            put(COLUMN_NAME, name)
-            put(COLUMN_AGE, age)
-        }
-        return db.insert(TABLE_NAME, null, contentValues)
+
+        db.insert(TABLE_NAME, null, values)
+
+        db.close()
     }
 ```
 
 Leer datos
 
 ```gradle
-        fun getAllData(): Cursor {
+         fun getName(): Cursor? {
+
         val db = this.readableDatabase
         return db.rawQuery("SELECT * FROM $TABLE_NAME", null)
-    }
+            }
+    
 ```
 
 Actualizar Datos
 
 ```gradle
-        fun updateData(id: Int, name: String, age: Int): Int {
+        fun updateName(id: String, newName: String, newAge: String): Int {
         val db = this.writableDatabase
-        val contentValues = ContentValues().apply {
-            put(COLUMN_NAME, name)
-            put(COLUMN_AGE, age)
-        }
-        return db.update(TABLE_NAME, contentValues, "$COLUMN_ID = ?", arrayOf(id.toString()))
+        val values = ContentValues()
+        values.put(NAME_COl, newName)
+        values.put(AGE_COL, newAge)
+
+        val selection = "$ID_COL = ?"
+        val selectionArgs = arrayOf(id)
+
+        val updatedRows = db.update(TABLE_NAME, values, selection, selectionArgs)
+        db.close()
+        return updatedRows
     }
 ```
 
 Borrar datos
 ```gradle
-        fun deleteData(id: Int): Int {
+         fun deleteName(id: String): Int {
         val db = this.writableDatabase
-        return db.delete(TABLE_NAME, "$COLUMN_ID = ?", arrayOf(id.toString()))
+        val selection = "$ID_COL = ?"
+        val selectionArgs = arrayOf(id)
+
+        val deletedRows = db.delete(TABLE_NAME, selection, selectionArgs)
+        db.close()
+        return deletedRows
+
     }
 ```
 
